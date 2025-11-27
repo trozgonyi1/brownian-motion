@@ -25,11 +25,12 @@ Node *getMax(MaxHeap *h)
 void insertKey(MaxHeap *h, int k, int direction, int timestep) {
   h->heap_size++;
   int i = h->heap_size - 1;
-  Node *n = malloc(sizeof(Node *));
+  Node *n = malloc(sizeof(Node));
   n->value = k;
   n->direction = direction;
   n->timestep = timestep;
   h->harr[i] = n;
+  printf("inserted: (%d, %d, %d)\n", n->value, n->direction, n->timestep);
 
   while (i != 0 && h->harr[parent(i)]->value < h->harr[i]->value)
   {
@@ -50,8 +51,9 @@ void decreaseKey(struct MaxHeap *h, int i, int new_val)
 
 Node *pop(struct MaxHeap *h)
 {
+  if (h->heap_size == 0) return NULL;
     if (h->heap_size <= 0) {
-        Node *n = (Node *)malloc(sizeof(Node *));
+        Node *n = (Node *)malloc(sizeof(Node));
         n->value = INT_MAX;
         n->direction = 0;
         n->timestep = 0;

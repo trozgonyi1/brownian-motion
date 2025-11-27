@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <time.h>
 #include <limits.h>
+#include <stdbool.h>
 #include "../include/heap.h"
 
 int comp(const void *a, const void *b) {
@@ -9,7 +10,7 @@ int comp(const void *a, const void *b) {
 }
 
 int main(int argc, char **argv) {
-  MaxHeap *maxheap = createMaxHeap(1<<6);
+  MaxHeap *maxheap = createMaxHeap(1<<8);
 
   srand(time(NULL));
   
@@ -25,17 +26,43 @@ int main(int argc, char **argv) {
 
   while (maxheap->heap_size > 0) {
     Node *level_array[BUFSIZ];
-    int i = 0;
+    int count = 0;
     Node *n = pop(maxheap);
+    if (n == NULL) return 0;
+    level_array[count] = n;
 
-    for (int i = 0; i < n->timestep; i++) {
-      printf(" ");
+    Node *curr = getMax(maxheap);
+    if (curr == NULL) return 0;
+    while (curr->value == n->value) {
+      count++;
+      curr = pop(maxheap);
+      if (curr == NULL) return 0;
+      level_array[count] = curr;
     }
+    printf("Level array:\n");
+    for (int l = 0; l < count; l++) {
+      printf("(%d, %d, %d) ", level_array[count]->value, level_array[count]->direction, level_array[count]->timestep);
+    }
+    printf("\n");
+    int size = sizeof(level_array)/sizeof(level_array[0]);
+    qsort(level_array, count, sizeof(Node *), comp);
 
-    if (n->direction == 1) {
-      printf("/");
-    } else if (n->direction == -1) {
-      printf("\\");
+
+    for (int t = 0; t < TIME_STEPS; t++) {
+      bool print_space = true;
+      for (int j = 0; j < count; j++) {
+        if (level_array[j]->timestep == t) {
+          print_space = false;
+          if (n->direction == 1) {
+            printf("/");
+          } else if (n->direction == -1) {
+            printf("\\");
+          }
+        }
+      }
+      if (print_space) {
+        printf(" ");
+      }
     }
     printf("\n");
 /*    level_array[i] = n;
