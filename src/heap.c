@@ -30,7 +30,6 @@ void insertKey(MaxHeap *h, int k, int direction, int timestep) {
   n->direction = direction;
   n->timestep = timestep;
   h->harr[i] = n;
-  printf("inserted: (%d, %d, %d)\n", n->value, n->direction, n->timestep);
 
   while (i != 0 && h->harr[parent(i)]->value < h->harr[i]->value)
   {
@@ -111,10 +110,13 @@ void swap(Node *x, Node *y)
   Node temp = {0}; 
   temp.value = x->value;
   temp.direction = x->direction;
+  temp.timestep = x->timestep;
   x->value = y->value;
   x->direction = y->direction;
+  x->timestep = y->timestep;
   y->value = temp.value;
   y->direction = temp.direction;
+  y->timestep = temp.timestep;
 }
 
 void print_heap(MaxHeap *h, int curr) {

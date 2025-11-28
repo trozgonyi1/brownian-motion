@@ -29,6 +29,11 @@ int main(int argc, char **argv) {
     int count = 0;
     Node *n = pop(maxheap);
     if (n == NULL) return 0;
+    int max = abs(n->value);
+
+    // Will need to lookup the slope of the step one line above and one timestep before
+    int slope_map[1<<10][TIME_STEPS];
+
     level_array[count] = n;
 
     Node *curr = getMax(maxheap);
@@ -39,22 +44,26 @@ int main(int argc, char **argv) {
       if (curr == NULL) return 0;
       level_array[count] = curr;
     }
-    printf("Level array:\n");
-    for (int l = 0; l < count; l++) {
-      printf("(%d, %d, %d) ", level_array[count]->value, level_array[count]->direction, level_array[count]->timestep);
-    }
-    printf("\n");
-    int size = sizeof(level_array)/sizeof(level_array[0]);
     qsort(level_array, count, sizeof(Node *), comp);
-
 
     for (int t = 0; t < TIME_STEPS; t++) {
       bool print_space = true;
       for (int j = 0; j < count; j++) {
         if (level_array[j]->timestep == t) {
           print_space = false;
+          
+          int ind = level_array[j]->value;
+          if (level_array[j]->value < 0) {
+            ind = max + abs(level_array[j]->value);
+          }
+          slope_map[ind][t] = n->direction;
+
           if (n->direction == 1) {
-            printf("/");
+            if (slope_map[ind-1][t-1] == -1) {
+              printf("\\/");
+            } else {
+              printf("/");
+            }
           } else if (n->direction == -1) {
             printf("\\");
           }
